@@ -32,11 +32,7 @@ export default function Home() {
       >
         <div className="space-y-4">
           <AppInput label="Meeting ID" name="channel" />
-          <AppInput
-            value="765b5fbbb5f4496cbdf8128646dd8fbd"
-            label="App ID"
-            name="appId"
-          />
+          <AppInput label="App ID" name="appId" />
           <AppInput label="Token" name="token" />
           <AppInput label="participant Id" name="uid" />
         </div>
