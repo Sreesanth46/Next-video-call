@@ -1,9 +1,58 @@
 "use client";
 import { useRouter } from "next/navigation";
 import AppInput from "./video/app-input";
+import { useEffect, useRef, useState } from "react";
+import AgoraRTC, {
+  ICameraVideoTrack,
+  IMicrophoneAudioTrack,
+  LocalUser,
+} from "agora-rtc-react";
 
 export default function Home() {
   const router = useRouter();
+  const [media, setMedia] = useState({
+    audio: false,
+    video: false,
+  });
+  const localTracks = useRef<{
+    videoTrack: ICameraVideoTrack | null;
+    audioTrack: IMicrophoneAudioTrack | null;
+  }>({
+    videoTrack: null,
+    audioTrack: null,
+  });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const videoTrack = await AgoraRTC.createCameraVideoTrack();
+
+        setMedia((prev) => ({
+          ...prev,
+          video: !!videoTrack,
+        }));
+        localTracks.current.videoTrack = videoTrack;
+      } catch (videoError) {
+        console.log({ mediaError: videoError });
+      }
+      try {
+        const audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+          encoderConfig: "music_standard",
+        });
+
+        setMedia((prev) => ({
+          ...prev,
+          audio: !!audioTrack,
+        }));
+        localTracks.current.audioTrack = audioTrack;
+      } catch (audioError) {
+        console.log({ mediaError: audioError });
+      }
+    })();
+  }, []);
+
+  const isLoading =
+    !localTracks.current.audioTrack || !localTracks.current.videoTrack;
 
   return (
     <div className="flex flex-col items-center">
@@ -11,6 +60,51 @@ export default function Home() {
         <span className="text-black">NextJS</span> x{" "}
         <span className="text-blue-500">Agora</span>
       </h1>
+      <div className="flex flex-col gap-6">
+        <div className="w-44 h-80 sm:w-48 ">
+          <LocalUser
+            audioTrack={localTracks.current.audioTrack}
+            cameraOn={media.video}
+            playVideo={media.video}
+            micOn={media.audio}
+            playAudio={media.audio}
+            videoTrack={localTracks.current.videoTrack}
+            style={{
+              width: "100%",
+              height: "100%",
+              background: "white",
+            }}
+          >
+            <div className="flex justify-center items-center h-full">
+              {isLoading && (
+                <div
+                  className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              )}
+            </div>
+          </LocalUser>
+        </div>
+        <div className="flex gap-2 justify-center">
+          <button
+            className={`p-2 rounded-md bg-red-300 ${
+              media.audio && "bg-blue-500"
+            }`}
+          >
+            Audio
+          </button>
+          <button
+            className={`p-2 rounded-md bg-red-300 ${
+              media.audio && "bg-blue-500"
+            }`}
+          >
+            Video
+          </button>
+        </div>
+      </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -32,11 +126,7 @@ export default function Home() {
       >
         <div className="space-y-4">
           <AppInput label="Meeting ID" name="channel" />
-          <AppInput
-            value="765b5fbbb5f4496cbdf8128646dd8fbd"
-            label="App ID"
-            name="appId"
-          />
+          <AppInput label="App ID" name="appId" />
           <AppInput label="Token" name="token" />
           <AppInput label="participant Id" name="uid" />
         </div>
