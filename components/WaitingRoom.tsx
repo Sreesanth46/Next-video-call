@@ -54,6 +54,20 @@ export default function WaitingRoom() {
   const isLoading =
     !localTracks.current.audioTrack || !localTracks.current.videoTrack;
 
+  const onControlChange = async (name: "audio" | "video", checked: boolean) => {
+    console.log({ name, checked });
+
+    if (name === "audio") {
+      localTracks.current.audioTrack?.setMuted(!checked);
+      await localTracks.current.audioTrack?.setEnabled(!checked);
+    }
+    if (name === "video") {
+      localTracks.current.videoTrack?.setMuted(!checked);
+      await localTracks.current.videoTrack?.setEnabled(!checked);
+    }
+    setMedia({ ...media, [name]: !checked });
+  };
+
   return (
     <div className="flex flex-col items-center">
       <h1 className="mb-4 mt-20 text-4xl font-extrabold leading-none tracking-tight text-gray-900">
@@ -63,10 +77,10 @@ export default function WaitingRoom() {
       <div className="flex flex-col gap-6">
         <LocalUser
           audioTrack={localTracks.current.audioTrack}
-          cameraOn={media.video}
-          playVideo={media.video}
-          micOn={media.audio}
-          playAudio={media.audio}
+          cameraOn
+          playVideo
+          micOn
+          playAudio
           videoTrack={localTracks.current.videoTrack}
           style={{
             width: "15rem",
@@ -88,16 +102,20 @@ export default function WaitingRoom() {
 
         <div className="flex gap-2 justify-center">
           <button
-            className={`p-2 rounded-md bg-red-300 ${
-              media.audio && "bg-blue-500"
-            }`}
+            onClick={() => onControlChange("audio", media.audio)}
+            className={`p-2 rounded-md bg-red-300`}
+            style={{
+              ...(media.audio && { background: "blue" }),
+            }}
           >
             Audio
           </button>
           <button
-            className={`p-2 rounded-md bg-red-300 ${
-              media.audio && "bg-blue-500"
-            }`}
+            onClick={() => onControlChange("video", media.video)}
+            className={`p-2 rounded-md bg-red-300`}
+            style={{
+              ...(media.video && { background: "blue" }),
+            }}
           >
             Video
           </button>
