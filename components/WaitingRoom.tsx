@@ -61,32 +61,31 @@ export default function WaitingRoom() {
         <span className="text-blue-500">Agora</span>
       </h1>
       <div className="flex flex-col gap-6">
-        <div className="w-44 h-80 sm:w-48 ">
-          <LocalUser
-            audioTrack={localTracks.current.audioTrack}
-            cameraOn={media.video}
-            playVideo={media.video}
-            micOn={media.audio}
-            playAudio={media.audio}
-            videoTrack={localTracks.current.videoTrack}
-            style={{
-              width: "100%",
-              height: "100%",
-              background: "white",
-            }}
-          >
-            <div className="flex justify-center items-center h-full">
-              {isLoading && (
-                <div
-                  className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
-                  aria-label="loading"
-                >
-                  <span className="sr-only">Loading...</span>
-                </div>
-              )}
-            </div>
-          </LocalUser>
-        </div>
+        <LocalUser
+          audioTrack={localTracks.current.audioTrack}
+          cameraOn={media.video}
+          playVideo={media.video}
+          micOn={media.audio}
+          playAudio={media.audio}
+          videoTrack={localTracks.current.videoTrack}
+          style={{
+            width: "15rem",
+            aspectRatio: "9/16",
+            background: "white",
+          }}
+        >
+          <div className="flex justify-center items-center h-full">
+            {isLoading && (
+              <div
+                className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
+            )}
+          </div>
+        </LocalUser>
+
         <div className="flex gap-2 justify-center">
           <button
             className={`p-2 rounded-md bg-red-300 ${
