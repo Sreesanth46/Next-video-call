@@ -83,7 +83,7 @@ export default function WaitingRoom() {
           playAudio
           videoTrack={localTracks.current.videoTrack}
           style={{
-            width: "15rem",
+            height: "19rem",
             aspectRatio: "9/16",
             background: "white",
           }}
